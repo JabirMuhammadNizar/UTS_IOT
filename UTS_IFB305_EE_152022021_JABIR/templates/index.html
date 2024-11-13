@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data JSON dari Flask</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #00aaff;
+        }
+        .data-section {
+            margin-bottom: 20px;
+            border: 1px solid #00aaff;
+            border-radius: 8px;
+            padding: 15px;
+            background: #1e1e1e;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        p {
+            font-size: 16px;
+            color: #d1d1d1;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            padding: 8px;
+            background-color: #2b2b2b;
+            margin-bottom: 5px;
+            border-left: 4px solid #00aaff;
+            color: #cfcfcf;
+        }
+        ul li:nth-child(even) {
+            background-color: #232323;
+        }
+        ul li:hover {
+            background-color: #00aaff;
+            color: #121212;
+            transition: 0.3s ease;
+        }
+        span {
+            font-weight: bold;
+            color: #00aaff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Data JSON dari Backend Flask</h1>
+
+    <div class="data-section" id="suhu-info">
+        <h2>Informasi Suhu</h2>
+        <p>Suhu Maksimum: <span id="suhu_max"></span></p>
+        <p>Suhu Minimum: <span id="suhu_min"></span></p>
+        <p>Suhu Rata-rata: <span id="suhu_rate"></span></p>
+    </div>
+
+    <div class="data-section" id="nilai-suhu-list">
+        <h2>Detail Nilai Suhu & Kelembaban Maksimum</h2>
+        <ul id="nilai_suhu_max_humid_max"></ul>
+    </div>
+
+    <div class="data-section" id="month-year-info">
+        <h2>Informasi Bulan & Tahun Maksimum</h2>
+        <ul id="month_year_max"></ul>
+    </div>
+
+    <script>
+        // Mengambil data JSON dari backend Flask
+        fetch('http://127.0.0.1:5000/data')
+            .then(response => response.json())
+            .then(data => {
+                // Menampilkan data suhu
+                document.getElementById('suhu_max').textContent = data.suhu_max;
+                document.getElementById('suhu_min').textContent = data.suhu_min;
+                document.getElementById('suhu_rate').textContent = data.suhu_rate;
+
+                // Menampilkan data nilai_suhu_max_humid_max
+                const nilaiSuhuList = document.getElementById('nilai_suhu_max_humid_max');
+                data.nilai_suhu_max_humid_max.forEach(item => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `ID: ${item.idx}, Suhu: ${item.suhu}, Humid: ${item.humid}, Kecerahan: ${item.kecerahan}, Timestamp: ${item.timestamp}`;
+                    nilaiSuhuList.appendChild(listItem);
+                });
+
+                // Menampilkan data month_year_max
+                const monthYearList = document.getElementById('month_year_max');
+                data.month_year_max.forEach(item => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `Month-Year: ${item.month_year}`;
+                    monthYearList.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+</body>
+</html>
